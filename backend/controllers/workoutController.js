@@ -1,5 +1,5 @@
 const Workout = require("../models/workoutModel");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 // get all workouts
 const getWorkouts = async (req, res) => {
   const workouts = await Workout.find({}).sort({ createdAt: -1 });
@@ -9,7 +9,7 @@ const getWorkouts = async (req, res) => {
 // get a single workout
 const getWorkout = async (req, res) => {
   const { id } = req.params;
-  if(!mongoose.Types.ObjectId.isValid(id)) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "Workout doesn't exist" });
   }
   const workout = await Workout.findById(id);
@@ -33,11 +33,37 @@ const createWorkout = async (req, res) => {
 };
 
 // delete a workout
+const deleteWorkout = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "Workout doesn't exist" });
+  }
+  const workout = await Workout.findByIdAndDelete(id);
+  if (!workout) {
+    return res.status(404).json({ error: "Workout doesn't exist" });
+  }
+  res.status(200).json(workout);
+};
 
 // update a workout
+const updateWorkout = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "Workout doesn't exist" });
+  }
+  const workout = await Workout.findByIdAndUpdate(id, {
+    ...req.body,
+  });
+  if (!workout) {
+    return res.status(404).json({ error: "Workout doesn't exist" });
+  }
+  res.status(200).json(workout);
+};
 
 module.exports = {
   getWorkouts,
   getWorkout,
   createWorkout,
+  deleteWorkout,
+  updateWorkout,
 };
